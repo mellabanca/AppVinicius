@@ -1,21 +1,89 @@
 import React, {Component} from "react";
-import { Text,View,Button } from "react-native";
+import { Text,View,Button,TouchableOpacity,TextInput,StyleSheet,Alert,KeyboardAvoidingView,Image} from "react-native";
+import firebase from "firebase";
+import db from "../config";
 
-
+var Imagem = require("../assets/fundonovo.png")
 export default class TelaLogin extends Component{
+constructor(props){
+  super(props);
+  this.state = {
+  email:"",
+  senha:""
+  }
+}
+loginUser = (email,senha) => {
+  firebase.auth().signInWithEmailAndPassword(email,senha).then(()=>{
+  this.props.navigation.navigate("TelaExp")
+  
+  })
+  .catch(error =>{
+    Alert.alert(error.message)
+  })
+}
 render(){
+  const {email,senha} = this.state
     return(
-     <View style = {{
-    flex:1,
-    justifyContent:"center",
-    alignItems:"center",
-     }}>
-      <Text>
-      se tu ta vendo isso é pq deu certo
-      </Text>
-    <Button title="Ir para proxima tela" onPress={()=> this.props.navigation.navigate("TelaExp")}/>
-     </View>   
+      <View style={{flex: 1, backgroundColor:"#DB1F2D"}}>
+      <KeyboardAvoidingView style = {styles.keyboard} behavior = "padding">
+        <Image source={Imagem} style={styles.imagem}/>
+        <TextInput style = {styles.text} onChangeText = {texto =>{this.setState({email:texto})}} placeholder = {"insira seu email"}placeholderTextColor = {"white"} autoFocus/>
+        <TextInput style = {styles.text} onChangeText = {texto =>{this.setState({senha:texto})}} placeholder = {"insira sua senha"}placeholderTextColor = {"white"} secureTextEntry/>
+        <TouchableOpacity style = {styles.botao}onPress = {()=>{this.loginUser(email,senha)}} >
+          <Text style = {styles.text2}>Clique para logar</Text>
+        </TouchableOpacity>
+    </KeyboardAvoidingView>
+    </View>
     )
 
 }
 }
+const styles = StyleSheet.create({
+  keyboard: {
+ flex:0.5,
+  backgroundColor:"#DB1F2D",
+  justifyContent:"center",
+  alignItems:"center"
+  },
+  text:{
+ width:250,
+ height:40,
+ padding:10,
+ borderColor:"black",
+ borderWidth:3,
+ fontSize:17,
+ color:"black",
+ backgroundColor:"darkred",
+ alignItems:"center",
+ alignSelf:"center",
+ justifyContent:"center",
+ marginTop:5
+  },
+  text2:{
+fontSize:20,
+textAlign:"center",
+color:"white",
+fontWeight:"bold",
+
+  },
+  botao:{
+ width:250,
+ height:40,
+ alignItems:"center",
+ backgroundColor:"black",
+ alignSelf:"center",
+ justifyContent:"center"
+ 
+  },
+  imagem:{
+  width:400,
+  height:400,
+  resizeMode:"contain",
+  justifyContent:"flex-start",
+  alignSelf:"flex-start",
+  alignItems:"flex-start",
+
+  
+  
+  }
+})
